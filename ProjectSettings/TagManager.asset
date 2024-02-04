@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Core
+  - Sun
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 3714422751
+    locked: 0
+  - name: Planet
+    uniqueID: 3401361391
+    locked: 0
+  - name: Sun
+    uniqueID: 1579737225
+    locked: 0
+  - name: God
+    uniqueID: 1436726611
+    locked: 0
+  - name: PlanetUi
+    uniqueID: 795621791
+    locked: 0
