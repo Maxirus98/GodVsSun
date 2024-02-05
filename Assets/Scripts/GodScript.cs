@@ -1,3 +1,4 @@
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,12 +13,16 @@ public class GodScript : MonoBehaviour
     float godPowerTimestamp = 0f;
     float godPowerRate = 1f;
 
+    // Spell Cost
+    float movingPlanetCostPerDistance = 0.25f;
+    float warmUpPlanetCost = 25f;
+    float coolDownPlanetCost = 25f;
+
     // Toggles
     public bool planetMoveable = true;
     public bool religionCollectable = false;
     public bool coolDownActive = false;
     public bool warmUpActive = false;
-
 
     private void Start()
     {
@@ -33,10 +38,10 @@ public class GodScript : MonoBehaviour
             if(planetMoveable)
                 MoveSelectedPlanet();
             if(coolDownActive)
-                CoolPlanet();
+                HelpPlanet("Cooler");
             if (warmUpActive)
-                WarmPlanet();
-            if(religionCollectable)
+                HelpPlanet("Heater");
+            if (religionCollectable)
                 CollectReligion();
 
         }
@@ -57,14 +62,24 @@ public class GodScript : MonoBehaviour
         warmUpActive = buttonId == 3;
     }
 
-    private void CoolPlanet()
+    private void HelpPlanet(string helperName)
     {
-        // todo: spawn a Cooler object
-    }
+        var hit = GetSelectedPlanet();
+        if (hit && !hit.collider.CompareTag("Sun"))
+        {
+            selectedPlanet = hit.collider.gameObject;
 
-    private void WarmPlanet()
-    {
-        // todo: spawn a Warmer object
+            if (selectedPlanet != null)
+            {
+                var cooldownGo = selectedPlanet.transform.Find(helperName);
+                if (!cooldownGo.gameObject.activeInHierarchy)
+                {
+                    cooldownGo.gameObject.SetActive(true);
+                    godPower -= coolDownPlanetCost;
+                    godPowerSlider.value = godPower;
+                } 
+            }
+        }
     }
 
     private void IncrementGodPower()

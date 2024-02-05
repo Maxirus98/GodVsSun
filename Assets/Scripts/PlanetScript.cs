@@ -79,10 +79,26 @@ public class PlanetScript : MonoBehaviour
         {
             heatRate = 0.0f;
         }
-        heatLevel += heatRate * Time.deltaTime;
+
+        var heater = transform.Find("Heater");
+        var cooler = transform.Find("Cooler");
+
+        // TODO: Balance
+        var inWarningZone = heatLevel > 25f || heatLevel < 10f;
+        if (heater.gameObject.activeInHierarchy && inWarningZone)
+        {
+            heatLevel += 10f * Time.deltaTime;
+        }
+        else if (cooler.gameObject.activeInHierarchy && inWarningZone)
+        {
+            heatLevel -= 10f * Time.deltaTime;
+        } else
+        {
+            heatLevel += heatRate * Time.deltaTime;
+        }
+
         heatSlider.value = heatLevel;
         heatFill.color = heatGradient.Evaluate(heatSlider.normalizedValue);
-        
 
         // Population
         LosePopulation();
