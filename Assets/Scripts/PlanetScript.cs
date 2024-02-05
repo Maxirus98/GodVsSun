@@ -1,51 +1,61 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlanetScript : MonoBehaviour
 {
-
     // Constants
     // TODO: To balance
     private readonly float MAX_HEAT_DANGER_DISTANCE = 20f;
     private readonly float MAX_COLD_DANGER_DISTANCE = 150f;
-
-    private Color ICY_BLUE_COLOR = new(176, 224, 230);
-    private Color NEUTRAL_COLOR = new Color(245, 245, 245);
-    private Color HEAT_WARNING = new Color(255, 171, 64);
-    private Color HEAT_DANGER = new Color(165, 1, 74);
+    private readonly float MAX_HEAT_LEVEL = 100f;
 
     // Properties
     public float HeatRate { get { return this.heatRate; } set { this.heatRate = value; } }
-
+    public int ReligionLevel { get { return this.religionLevel; } set { this.religionLevel = value; } }
     // Variables
-    float maxHeatLevel = 100f;
+    Transform sun;
+    
+    // Heat
+    public Gradient heatGradient;
+    Slider heatSlider;
+    Image heatFill;
+    float heatRate = 0.0f;
+    float heatLevel;
+
+    // Population
+    Slider populationSlider;
     [SerializeField]
     float startPopulationCountInMillions = 8000f;
     float populationCountInMillions;
 
-    [SerializeField]
-    Slider heatSlider;
-    [SerializeField]
-    Image heatSliderFill;
+    // Religion
+    TextMeshProUGUI religionLevelText;
+    int religionLevel = 1;
+    float religionTimestamp = 0f;
+    float religionDelay = 1f;
 
-    [SerializeField]
-    Slider populationSlider;
-
-    [SerializeField]
-    Transform sun;
-
-    float heatRate = 0.0f;
-    int religionRate = 1;
-    float heatLevel;
-    
+    private void Awake()
+    {
+        // Components
+        var planetUi = transform.GetChild(0);
+        heatSlider = planetUi.Find("Heat").GetComponent<Slider>();
+        heatFill = heatSlider.transform.Find("Fill").GetComponent<Image>();
+        populationSlider = planetUi.Find("Population").GetComponent<Slider>();
+        religionLevelText = planetUi.Find("ReligionLevelText").GetComponent<TextMeshProUGUI>();
+    }
 
     private void Start()
     {
+        // Sun
+        sun = GameObject.Find("Sun").transform;
+
         // Heat
         heatSlider.minValue = 0.0f;
         heatLevel = 25f;
+        heatGradient.Evaluate(heatLevel / 100f);
         heatSlider.value = heatLevel;
-        heatSlider.maxValue = maxHeatLevel;
+        heatSlider.maxValue = MAX_HEAT_LEVEL;
 
         // Population
         populationCountInMillions = startPopulationCountInMillions;
@@ -71,30 +81,14 @@ public class PlanetScript : MonoBehaviour
         }
         heatLevel += heatRate * Time.deltaTime;
         heatSlider.value = heatLevel;
-
+        heatFill.color = heatGradient.Evaluate(heatSlider.normalizedValue);
+        
 
         // Population
         LosePopulation();
-    }
 
-
-    // TODO: FIX COLOR CHANGE ON SLIDER WITH VALUE. Not important
-    public void UpdateColor()
-    {
-        if(heatLevel >= 75f)
-        {
-            heatSliderFill.color = HEAT_DANGER;
-
-        } else if (heatLevel >= 40f)
-        {
-            heatSliderFill.color = HEAT_WARNING;
-        } else if (heatLevel <= 10f)
-        {
-            heatSliderFill.color = ICY_BLUE_COLOR;
-        } else
-        {
-            heatSliderFill.color = NEUTRAL_COLOR;
-        }
+        // Religion
+        IncrementReligion();
     }
 
     private void LosePopulation()
@@ -115,5 +109,17 @@ public class PlanetScript : MonoBehaviour
         }
 
         populationSlider.value = populationCountInMillions;
+    }
+
+    private void IncrementReligion()
+    {
+        religionTimestamp += Time.deltaTime;
+
+        if (religionTimestamp >= religionDelay)
+        {
+            religionTimestamp = 0f;
+            religionLevel++;
+            religionLevelText.text = $"{religionLevel}";
+        }
     }
 }

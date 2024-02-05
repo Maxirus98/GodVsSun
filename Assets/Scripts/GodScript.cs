@@ -1,14 +1,31 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GodScript : MonoBehaviour
 {
     private GameObject selectedPlanet;
-    float godPower;
 
+    // God Power
+    [SerializeField]
+    private Slider godPowerSlider;
+    float godPower;
+    float godPowerTimestamp = 0f;
+    float godPowerRate = 1f;
+
+    // Toggles
     public bool planetMoveable = true;
     public bool religionCollectable = false;
     public bool coolDownActive = false;
     public bool warmUpActive = false;
+
+
+    private void Start()
+    {
+        godPower = 25f;
+        godPowerSlider.value = godPower;
+        godPowerSlider.minValue = 0f;
+        godPowerSlider.maxValue = 100f;
+    }
 
     void Update()
     {
@@ -17,6 +34,10 @@ public class GodScript : MonoBehaviour
                 MoveSelectedPlanet();
             if(coolDownActive)
                 CoolPlanet();
+            if (warmUpActive)
+                WarmPlanet();
+            if(religionCollectable)
+                CollectReligion();
 
         }
 
@@ -24,6 +45,8 @@ public class GodScript : MonoBehaviour
         {
             selectedPlanet = null;
         }
+
+        IncrementGodPower();
     }
 
     public void OnClick(int buttonId)
@@ -44,20 +67,54 @@ public class GodScript : MonoBehaviour
         // todo: spawn a Warmer object
     }
 
-    private void MoveSelectedPlanet()
+    private void IncrementGodPower()
     {
-        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0f;
+        godPowerTimestamp += Time.deltaTime;
 
-        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+        if (godPowerTimestamp >= godPowerRate)
+        {
+            godPowerTimestamp = 0f;
+            godPower++;
+            godPowerSlider.value = godPower;
+        }
+    }
+
+    private void CollectReligion()
+    {
+        RaycastHit2D hit = GetSelectedPlanet();
         if (hit && !hit.collider.CompareTag("Sun"))
         {
             selectedPlanet = hit.collider.gameObject;
 
             if (selectedPlanet != null)
             {
-                hit.transform.position = mousePos;
+                var planetScript = selectedPlanet.GetComponent<PlanetScript>();
+                godPower += planetScript.ReligionLevel;
+                godPowerSlider.value = godPower;
+                planetScript.ReligionLevel = 0;
             }
         }
+    }
+
+    private void MoveSelectedPlanet()
+    {
+        RaycastHit2D hit = GetSelectedPlanet();
+        if (hit && !hit.collider.CompareTag("Sun"))
+        {
+            selectedPlanet = hit.collider.gameObject;
+
+            if (selectedPlanet != null)
+            {
+                hit.transform.position = hit.point;
+            }
+        }
+    }
+
+    private RaycastHit2D GetSelectedPlanet()
+    {
+        var mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePos.z = 0f;
+
+        return Physics2D.Raycast(mousePos, Vector2.zero);
     }
 }
