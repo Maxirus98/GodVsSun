@@ -5198,6 +5198,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1619781722857970650}
+  - component: {fileID: 6005676758987621962}
   m_Layer: 0
   m_Name: Heater
   m_TagString: Untagged
@@ -5223,6 +5224,19 @@ Transform:
   - {fileID: 6684177159441769247}
   m_Father: {fileID: 5955249763583088494}
   m_LocalEulerAnglesHint: {x: -9.973, y: 37.603, z: 0.518}
+--- !u!114 &6005676758987621962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714982711327009048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67fef424077405c439c7895298c62f3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seconds: 5
 --- !u!1 &1744371846649212869
 GameObject:
   m_ObjectHideFlags: 0
@@ -25411,6 +25425,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3685156088158026269}
+  - component: {fileID: 1415569654273603751}
   m_Layer: 0
   m_Name: Cooler
   m_TagString: Untagged
@@ -25436,6 +25451,19 @@ Transform:
   - {fileID: 6561176161648837929}
   m_Father: {fileID: 5955249763583088494}
   m_LocalEulerAnglesHint: {x: -9.973, y: 37.603, z: 0.518}
+--- !u!114 &1415569654273603751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6442177751081508165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67fef424077405c439c7895298c62f3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seconds: 5
 --- !u!1 &7898960452269541356
 GameObject:
   m_ObjectHideFlags: 0

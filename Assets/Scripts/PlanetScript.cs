@@ -30,6 +30,8 @@ public class PlanetScript : MonoBehaviour
     float populationCountInMillions;
 
     // Religion
+    [SerializeField]
+    int startReligionLevel = 10;
     TextMeshProUGUI religionLevelText;
     int religionLevel = 1;
     float religionTimestamp = 0f;
@@ -37,7 +39,6 @@ public class PlanetScript : MonoBehaviour
 
     private void Awake()
     {
-        // Components
         var planetUi = transform.GetChild(0);
         heatSlider = planetUi.Find("Heat").GetComponent<Slider>();
         heatFill = heatSlider.transform.Find("Fill").GetComponent<Image>();
@@ -62,17 +63,19 @@ public class PlanetScript : MonoBehaviour
         populationSlider.minValue = 0.0f;
         populationSlider.maxValue = startPopulationCountInMillions;
         populationSlider.value = populationCountInMillions;
+
+        religionLevel = startReligionLevel;
+        religionLevelText.text = startReligionLevel.ToString();
     }
 
     private void Update()
     {
         // Heat
         var distanceFromTheSun = (transform.position - sun.position).sqrMagnitude;
-        if(distanceFromTheSun <= MAX_HEAT_DANGER_DISTANCE)
+        if (distanceFromTheSun <= MAX_HEAT_DANGER_DISTANCE)
         {
             heatRate += MAX_HEAT_DANGER_DISTANCE / distanceFromTheSun * Time.deltaTime;
-        }
-        else if(distanceFromTheSun >= MAX_COLD_DANGER_DISTANCE)
+        } else if(distanceFromTheSun >= MAX_COLD_DANGER_DISTANCE)
         {
             heatRate -= MAX_COLD_DANGER_DISTANCE / distanceFromTheSun * Time.deltaTime;
         } else
@@ -84,12 +87,11 @@ public class PlanetScript : MonoBehaviour
         var cooler = transform.Find("Cooler");
 
         // TODO: Balance
-        var inWarningZone = heatLevel > 25f || heatLevel < 10f;
-        if (heater.gameObject.activeInHierarchy && inWarningZone)
+        if (heater.gameObject.activeInHierarchy && heatLevel < 10f)
         {
             heatLevel += 10f * Time.deltaTime;
         }
-        else if (cooler.gameObject.activeInHierarchy && inWarningZone)
+        else if (cooler.gameObject.activeInHierarchy && heatLevel > 25f)
         {
             heatLevel -= 10f * Time.deltaTime;
         } else
@@ -107,6 +109,7 @@ public class PlanetScript : MonoBehaviour
         IncrementReligion();
     }
 
+    // TODO: Slowly increment population when not losing population
     private void LosePopulation()
     {
         var populationLostRate = heatLevel * Time.deltaTime;
@@ -122,16 +125,20 @@ public class PlanetScript : MonoBehaviour
         else if (heatLevel <= 10f)
         {
             populationCountInMillions -= populationLostRate  * 10f;
+        } else
+        {
+            populationCountInMillions += populationCountInMillions < startPopulationCountInMillions ? 50f * Time.deltaTime : 0f;
         }
 
         populationSlider.value = populationCountInMillions;
     }
 
+
     private void IncrementReligion()
     {
         religionTimestamp += Time.deltaTime;
 
-        if (religionTimestamp >= religionDelay)
+        if (religionLevel < 100 && religionTimestamp >= religionDelay)
         {
             religionTimestamp = 0f;
             religionLevel++;
